@@ -5,35 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>SIWASKES - Vaksinasi Internasional</title>
   
-  <link rel="icon" href="https://raw.githubusercontent.com/pipin4/aset_sisegar/main/siwaskes_icon.png">
+  <!-- Memanggil library FontAwesome agar logo CSS bisa dirender -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   
   <style>
-    /* Mengatur agar halaman tidak bisa di-scroll dan full screen */
-    html, body { 
-      margin: 0; 
-      padding: 0; 
-      width: 100%; 
-      height: 100%; 
-      overflow: hidden; 
-      background: #f2f5fa; 
-    }
+    html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#f2f5fa; font-family:'Poppins', 'Segoe UI', Roboto, Arial, sans-serif; }
     
-    /* TRIK: Menarik iframe ke atas untuk memotong banner Apps Script */
-    iframe { 
-      position: fixed; 
-      top: -36px; /* Menarik ke atas sebesar tinggi banner Google */
-      left: 0; 
-      width: 100%; 
-      height: calc(100% + 36px); /* Mengkompensasi tinggi yang ditarik agar bawahnya tidak ngatung */
-      border: 0; 
-      background: #f2f5fa; 
-    }
+    /* Warna background loader diubah ke Navy agar logo perisai Turquoise terlihat menonjol */
+    #loader { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:linear-gradient(135deg, #005f61, #007376); color:#fff; z-index:2; transition:opacity .5s ease; }
+    
+    #loader b { font-size:22px; letter-spacing:1px; font-weight:700; margin-top:8px; }
+    #loader span { font-size:13px; opacity:.9; }
+    #loader.hide { opacity:0; pointer-events:none; }
+    
+    /* Iframe ukuran normal tanpa terpotong bagian atasnya */
+    iframe { position:fixed; inset:0; width:100%; height:100%; border:0; background:#f2f5fa; }
+    
+    #fallback { position:fixed; bottom:12px; left:0; right:0; text-align:center; font-size:12px; color:#fff; z-index:3; }
+    #fallback a { color:#fff; font-weight:700; }
   </style>
 </head>
 <body>
+  <div id="loader">
+    
+    <!-- LOGO CSS SIWASKES (Tanpa file gambar) -->
+    <div style="position:relative; width:90px; height:90px;">
+      <!-- Perisai -->
+      <i class="fa-solid fa-shield" style="color:#14b8a6; font-size:90px; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); z-index:1;"></i>
+      <!-- Bola Dunia -->
+      <i class="fa-solid fa-earth-asia" style="color:#005f61; font-size:42px; position:absolute; left:50%; top:45%; transform:translate(-50%, -50%); z-index:2;"></i>
+      <!-- Pesawat -->
+      <i class="fa-solid fa-plane" style="color:#fff; font-size:30px; position:absolute; left:58%; top:58%; transform:translate(-50%, -50%) rotate(-45deg); z-index:3;"></i>
+    </div>
+    
+    <b>SIWASKES</b>
+    <span>Memuat aplikasi...</span>
+  </div>
+  
+  <div id="fallback">Layar tidak muncul? <a id="directLink" href="#" target="_top">Buka langsung</a></div>
 
-  <!-- Aplikasi SIWASKES dimuat di dalam iframe tanpa loading screen -->
+  <!-- URL mengarah ke SIWASKES -->
   <iframe id="app" title="SIWASKES" allow="fullscreen" src="https://bkk.s.gy/siwaskes"></iframe>
 
+  <script>
+    var frame = document.getElementById('app');
+    document.getElementById('directLink').href = frame.src;
+    frame.addEventListener('load', function () {
+      document.getElementById('loader').classList.add('hide');
+      document.getElementById('fallback').style.display = 'none';
+    });
+    // Jika dalam 12 detik belum selesai dimuat, loader tetap disembunyikan agar tombol fallback terlihat
+    setTimeout(function () { document.getElementById('loader').classList.add('hide'); }, 12000);
+  </script>
 </body>
 </html>
